@@ -33,7 +33,7 @@ def config():
     epochs = 10
     lr = 0.0001
     weight_decay = 4e-4
-    scheduler_tau = [1, 80]
+    scheduler_tau = [5, 80]
     scheduler_gamma = 0.1
     cpu = False  # Force training on CPU
     cudnn_flag = 'benchmark'
