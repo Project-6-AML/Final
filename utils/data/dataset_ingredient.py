@@ -162,8 +162,6 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     class_id_queries = [get__class_id(*m, M, alpha)
                             for m in queries_utms]
     
-    print(len(set(class_id_queries)))
-    
     images_per_class_database = defaultdict(list)
     for image_path, class_id in zip(database_paths, class_id_database):
         images_per_class_database[class_id].append(image_path)
@@ -179,8 +177,6 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
     samples_database = [(img, sublist[1]) for sublist in images_per_class_database for img in sublist[0]]
     samples_queries = [(img, sublist[1]) for sublist in images_per_class_queries for img in sublist[0]]
 
-    print(samples_queries[0][0])
-
     print(f"samples_database len: {len(samples_database)}") #8023
     print(f"samples_queries len: {len(samples_queries)}") #8002
 
@@ -193,18 +189,10 @@ def get_sets(name, data_path, train_folder, test_folder, num_workers, M=10, alph
                                                     radius=positive_dist_threshold,
                                                     return_distance=True, sort_results=True)
     
-    print(f"len first query: {len(distances[0])}")
-    print(f"distances: {distances[0][0:8]}")
-    print(f"positives: {positives_per_query[0][0:8]}")
-    print(f"image_path of closest: {samples_database[positives_per_query[0][0]][0]}")
-    
     with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_positives.pkl", "wb+") as f:
         pickle.dump(positives_per_query, f)
         
     distances, indices = knn.kneighbors(queries_utms, n_neighbors=len(samples_database))
-
-    print(f"distances: {distances[0][0:8]}")
-    print(f"test: {indices[0][0:8]}")
     
     with open("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl", "wb+") as f:
         pickle.dump(indices, f)
