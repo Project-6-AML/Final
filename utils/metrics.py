@@ -160,7 +160,7 @@ def recall_at_ks_rerank(
 
     """
 
-    ground_truth = pickle_load("/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_positives.pkl")
+    ground_truth = pickle_load("/content/Final/rrt_sop_caches/rrt_r50_sop_nn_inds_positives.pkl")
     ground_truth = np.array(ground_truth)
 
     print(f"Query features and labels shape: {query_features.shape} {query_labels.shape}")

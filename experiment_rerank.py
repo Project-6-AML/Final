@@ -40,7 +40,7 @@ def config():
     temp_dir = osp.join('logs', 'temp')
     no_bias_decay = False
     resume = None
-    cache_nn_inds = '/content/AML_Rerank_MobileNet/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
+    cache_nn_inds = '/content/Final/rrt_sop_caches/rrt_r50_sop_nn_inds_test.pkl'
     seed = 459858808
 
 
