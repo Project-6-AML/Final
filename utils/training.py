@@ -125,115 +125,6 @@ def train_rerank(model: nn.Module,
 
     return loss
 
-def train_rerank_backbone(model: nn.Module,
-        loader: DataLoader,
-        optimizer: Optimizer,
-        scheduler: _LRScheduler,
-        epoch: int,
-        ex: Experiment = None) -> None:
-    
-    model.train()
-    device = next(model.parameters()).device
-    to_device = lambda x: x.to(device, non_blocking=True)
-    loader_length = len(loader)
-    train_losses = AverageMeter(device=device, length=loader_length)
-    train_accs = AverageMeter(device=device, length=loader_length)
-
-    class_loss = nn.TripletMarginLoss(margin=1.0, p=2)
-
-    save_size = 10
-    save_order = 0
-
-    pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
-    for i, (batch, labels, indices) in enumerate(pbar):
-        batch, labels, indices = map(to_device, (batch, labels, indices))
-
-        ##################################################
-        ## extract features
-        l = model(batch)
-        anchors   = l[0::3]
-        positives = l[1::3]
-        negatives = l[2::3]
-
-        loss = class_loss(anchors, positives, negatives)
-
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        if not (i + 1) % 100:
-            print(f"Loss at batch {i+1}: {loss.item()}")
-
-    scheduler.step()
-
-def train_rerank_transformer(model: nn.Module,
-        loader: DataLoader,
-        class_loss: nn.Module,
-        optimizer: Optimizer,
-        scheduler: _LRScheduler,
-        epoch: int,
-        ex: Experiment = None) -> None:
-    
-    model.train()
-    device = next(model.parameters()).device
-    to_device = lambda x: x.to(device, non_blocking=True)
-    loader_length = len(loader)
-    train_losses = AverageMeter(device=device, length=loader_length)
-    train_accs = AverageMeter(device=device, length=loader_length)
-    
-    offset = 0
-    flag = 0
-    save_order = 0
-    save_size = 10
-    features = "Prova"
-
-    pbar = tqdm(loader, ncols=80, desc='Training   [{:03d}]'.format(epoch))
-    for i, (batch, labels, indices) in enumerate(pbar):
-        batch, labels, indices = map(to_device, (batch, labels, indices))
-
-        if flag % save_size == 0:
-            del features        
-            offset=0
-            features = torch.load(f"/home/cristiano/Desktop/Features/features_{save_order}.pt") # Carico save_size batches
-            features = to_device(features)
-            save_order += 1
-
-        ##################################################
-        extracted = features[offset : offset + batch.size(0)]
-        offset += batch.size(0)
-
-        ## extract features
-        anchors   = extracted[0::3]
-        positives = extracted[1::3]
-        negatives = extracted[2::3]
-        #print(f"anchors: {anchors.size()}, positives: {positives.size()}, negatives: {negatives.size()}")
-        p_logits = model(src_global=None, src_local=anchors, tgt_global=None, tgt_local=positives)
-        n_logits = model(src_global=None, src_local=anchors, tgt_global=None, tgt_local=negatives)
-        logits = torch.cat([p_logits, n_logits], 0)
-
-        bsize = logits.size(0)
-        labels = logits.new_ones(logits.size())
-        labels[(bsize//2):] = 0
-        loss = class_loss(logits, None, labels).mean()
-        acc = ((torch.sigmoid(logits) > 0.5).long() == labels.long()).float().mean()
-
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-
-        train_losses.append(loss)
-        train_accs.append(acc)
-
-        flag += 1
-
-        if not (i + 1) % 100:
-            print(f"Loss at batch {i+1}: {loss.item()}")
-            print(f"Logits: {logits}")
-
-    scheduler.step()
-
-
-
 ###################################################################
 
 
@@ -336,7 +227,6 @@ def evaluate_rerank_all(model: nn.Module,
             gallery_loader: Optional[DataLoader],
             recall_ks: List[int]):
 
-    print(f"Free GPU memory before: {get_gpu_memory()}")
     model.eval()
     device = next(model.parameters()).device
     print(f"Device in evaluation: {device}")
