@@ -189,10 +189,12 @@ def recall_at_ks_rerank(
 
     gallery_batches = gallery_features.split(1000)
 
+    reranking_size = 100
+
     i = 0
 
     for query in tqdm(query_features):
-        gallery_batch = torch.index_select(gallery_features, dim=0, index=cache_nn_inds[i, 0:100]).split(1000)
+        gallery_batch = torch.index_select(gallery_features, dim=0, index=cache_nn_inds[i, 0:reranking_size]).split(1000)
         i += 1
         k_scores = []
         for gallery in gallery_batch:
@@ -240,7 +242,7 @@ def recall_at_ks_rerank(
     #     for j in range(top_k):
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
-    closest_indices = torch.gather(cache_nn_inds[:, 0:100], -1, indices).numpy()   #predictions
+    closest_indices = torch.gather(cache_nn_inds[:, 0:reranking_size], -1, indices).numpy()   #predictions
 
 #### For each query, check if the predictions are correct
     #ground_truth = np.array(cache_nn_inds) # ground truth
