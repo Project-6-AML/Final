@@ -187,8 +187,6 @@ def recall_at_ks_rerank(
 
     #gallery_features = torch.gather(gallery_features, dim=0, index=cache_nn_inds[0:100])
 
-    print(f"galler_features size: {gallery_features.size()}")
-
     gallery_batches = gallery_features.split(1000)
 
     i = 0
@@ -230,52 +228,19 @@ def recall_at_ks_rerank(
         k_scores = torch.cat(k_scores, 0)
         scores.append(k_scores)
     """
-    print('time', total_time/num_samples)
-    print(f"scores len before stack: {len(scores)}")
     scores = torch.stack(scores, 0)
 
     with open("/content/drive/MyDrive/scores.pkl", "wb+") as f:
         pickle.dump(scores, f)
 
-    print(f"scores size after stack: {scores.size()}")
     closest_dists, indices = torch.sort(scores, dim=-1, descending=True)
     closest_dists = closest_dists.numpy()
-    print(f"indices shape: {indices.shape}")
     # closest_indices = torch.zeros((num_samples, top_k)).long()
     # for i in range(num_samples):
     #     for j in range(top_k):
     #         closest_indices[i, j] = cache_nn_inds[i, indices[i, j]]
     # closest_indices = closest_indices.numpy()
     closest_indices = torch.gather(cache_nn_inds[:, 0:100], -1, indices).numpy()   #predictions
-    print(f"closest_dists: {closest_dists[0][0:8]}")
-    print(f"closest_indices: {closest_indices[0][0:5]}")
-    print(f"indices: {indices[0][0:8]}")
-    print(f"ground_truth: {ground_truth[0][0:8]}")
-    print(f"cache_nn_inds: {cache_nn_inds[0][0:8]}")
-
-    #max_k = max(ks)
-    #recalls = {}
-    #for k in ks:
-    #    indices = closest_indices[:, :k]
-    #    recalls[k] = (q_l[:, None] == g_l[indices]).any(1).mean()
-
-    #recalls = np.zeros(len(ks))
-    #for query_index, preds in enumerate(closest_indices):
-    #    for i, n in enumerate(ks):
-    #        # OR(AND)
-    #        if np.any(np.in1d(preds[:n], cache_nn_inds[query_index])):
-    #            recalls[i:] += 1
-    #            break
-
-    #recalls = recalls / query_features.size(0) * 100
-
-    #[R@1, R@5, R@10, R@20]
-    
-    #ret = {k: round(v, 2) for k, v in zip(ks, recalls)}
-
-    #ret = {k: round(v * 100, 2) for k, v in recalls.items()}
-
-    #return ret, closest_dists, closest_indices
 
 #### For each query, check if the predictions are correct
     #ground_truth = np.array(cache_nn_inds) # ground truth
@@ -284,7 +249,7 @@ def recall_at_ks_rerank(
 
     for query_index, preds in enumerate(predictions):
         for i, n in enumerate(ks): #1, 5, 10, 20
-            if np.any(np.in1d(preds[:n], ground_truth[query_index])):
+            if np.any(np.in1d(preds[:n], cache_nn_inds[query_index][:n])):
                 recalls[i:] += 1
                 break
     
