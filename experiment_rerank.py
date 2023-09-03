@@ -16,13 +16,13 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 #from models.ingredient import model_ingredient, get_model
-from models.ingredient import get_model
+from models.ingredient import get_model, model_ingredient
 from utils import pickle_load, pickle_save
 from utils import state_dict_to_cpu, BinaryCrossEntropyWithLogits, num_of_trainable_params
 from utils.data.dataset_ingredient import data_ingredient, get_loaders
 from utils.training import train_rerank, evaluate_rerank_all
 
-ex = sacred.Experiment('Rerank (train)', ingredients=[data_ingredient])
+ex = sacred.Experiment('Rerank (train)', ingredients=[data_ingredient, model_ingredient])
 # Filter backspaces and linefeeds
 SETTINGS.CAPTURE_MODE = 'sys'
 ex.captured_out_filter = apply_backspaces_and_linefeeds

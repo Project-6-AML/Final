@@ -4,7 +4,6 @@ from .complete import Network
 
 model_ingredient = Ingredient('model')
 
-
 @model_ingredient.config
 def config():
     arch = 'resnet18'
