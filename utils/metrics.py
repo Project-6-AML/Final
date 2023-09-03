@@ -208,28 +208,6 @@ def recall_at_ks_rerank(
         #print(f"k_scores size: {k_scores.size()}")
         scores.append(k_scores)
 
-    # bsize = batch_size for reranking
-    # Changed.
-    bsize = min(num_samples, 500)
-    total_time = 0.0
-    ######################################################################
-    """
-    print('--------------------------------------------')
-    print('Start reranking')
-    for i in tqdm(range(top_k)): #top_k = 20
-        k_scores = []
-        for j in range(0, num_samples, bsize):
-            current_query = query_features[j:(j+bsize)]
-            current_index = gallery_features[cache_nn_inds[j:(j+bsize), i]]
-            start = time.time()
-            current_scores = model(None, True, src_global=None, src_local=current_query.to(device), 
-                tgt_global=None, tgt_local=current_index.to(device))
-            end = time.time()
-            total_time += end-start
-            k_scores.append(current_scores.cpu())
-        k_scores = torch.cat(k_scores, 0)
-        scores.append(k_scores)
-    """
     scores = torch.stack(scores, 0)
 
     with open("/content/drive/MyDrive/scores.pkl", "wb+") as f:
@@ -245,7 +223,6 @@ def recall_at_ks_rerank(
     closest_indices = torch.gather(cache_nn_inds[:, 0:reranking_size], -1, indices).numpy()   #predictions
 
 #### For each query, check if the predictions are correct
-    #ground_truth = np.array(cache_nn_inds) # ground truth
     predictions = np.array(closest_indices)
     recalls = np.zeros(len(ks))
 
