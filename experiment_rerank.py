@@ -178,7 +178,7 @@ def test(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_n
 
     model = get_model(num_classes=loaders.num_classes)
     model.to(device)
-    resume = f'/content/drive/MyDrive/models/final_9.pth'
+    resume = f'/content/drive/MyDrive/models/final_9.pth' #change this to use a different trained model
     
     if resume is not None:
         print("Resuming")
