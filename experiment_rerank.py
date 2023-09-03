@@ -121,7 +121,8 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
 
     # setup best validation logger
     #metrics = eval_function()[0]
-    torch.enable_grad()f'/content/drive/MyDrive/models/final_9.pth'
+    torch.enable_grad()
+    #pprint(metrics)
     #best_val = (0, metrics, deepcopy(model.state_dict()))
     best_val = float('inf')
 
