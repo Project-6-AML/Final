@@ -16,7 +16,7 @@ from torch.utils.data import DataLoader
 from tqdm import tqdm
 
 #from models.ingredient import model_ingredient, get_model
-from models_2.ingredient import model_ingredient, get_model
+from models.ingredient import model_ingredient, get_model
 from utils import pickle_load, pickle_save
 from utils import state_dict_to_cpu, BinaryCrossEntropyWithLogits, num_of_trainable_params
 from utils.data.dataset_ingredient import data_ingredient, get_loaders
