@@ -26,7 +26,7 @@ def config():
     name = 'sop'
     data_path = 'data/Stanford_Online_Products'
     train_folder = '/content/drive/MyDrive/small/train'
-    test_folder = '/content/drive/MyDrive/tokyo_night/test'
+    test_folder = '/content/drive/MyDrive/tokyo_night/test' #Change this to evaluate a different dataset
 
     batch_size = 32
     sample_per_id = 2
