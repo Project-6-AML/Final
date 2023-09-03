@@ -1,8 +1,5 @@
 from sacred import Ingredient
 
-from .matcher import MatchERT
-from .resnet import resnet18
-from .mobilenet import mobilenetv3_large
 from .complete import Network
 
 model_ingredient = Ingredient('model')
