@@ -71,6 +71,8 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     model = get_model(num_classes=loaders.num_classes)
 
     resume = None
+    optim = None
+    sched_dict = None
 
     if resume is not None:
         print("Resuming")
