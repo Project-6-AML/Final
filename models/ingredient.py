@@ -30,12 +30,6 @@ def config():
     ert_activation="relu"
     ert_normalize_before=False
 
-
-@model_ingredient.named_config
-def resnet50():
-    arch = 'resnet50'
-    normalize = True
-
 @model_ingredient.capture
 def get_model(
         num_classes, arch, pretrained, num_global_features, norm_layer, detach, remap, normalize, normalize_weight, set_bn_eval, dropout, num_local_features, freeze_backbone,
