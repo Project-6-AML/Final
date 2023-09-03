@@ -70,7 +70,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     torch.manual_seed(seed)
     model = get_model(num_classes=loaders.num_classes)
 
-    resume = f'/content/drive/MyDrive/models/final_9.pth'
+    resume = None
 
     if resume is not None:
         print("Resuming")
@@ -142,7 +142,7 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
         for param_group in optimizer.param_groups:
             print(f"Learning rate for this epoch: {param_group['lr']}")
 
-        save_name = f'/content/drive/MyDrive/models/final_{epoch+4}.pth'
+        save_name = f'/content/drive/MyDrive/models/final_{epoch}.pth'
         print(save_name)
 
         if cudnn_flag == 'benchmark':
