@@ -185,10 +185,6 @@ def recall_at_ks_rerank(
     _, fsize, h, w = query_features.size()
     scores = []
 
-    #gallery_features = torch.gather(gallery_features, dim=0, index=cache_nn_inds[0:100])
-
-    gallery_batches = gallery_features.split(1000)
-
     reranking_size = 100
 
     i = 0

@@ -113,9 +113,6 @@ def train(epochs, cpu, cudnn_flag, temp_dir, seed, no_bias_decay, resume, cache_
     if optim and sched_dict is not None:
         optimizer.load_state_dict(optim)
         scheduler.load_state_dict(sched_dict)
-    
-    #with torch.no_grad():
-    #    generate_features(model, loaders.train)
 
     # setup partial function to simplify call
     eval_function = partial(evaluate_rerank_all, model=model, cache_nn_inds=cache_nn_inds,
